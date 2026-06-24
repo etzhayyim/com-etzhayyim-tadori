@@ -1,0 +1,35 @@
+;; malak → tadori `traceReport` CONTRACT (reference fixture). ADR-2605301400 §D3 / lexicon
+;; com.etzhayyim.tadori.traceReport. The malak pursuit engine lives in its OWN repo; THIS file
+;; is the executable contract its output must satisfy so tadori.methods.malak-ingest/consolidate
+;; can durably consolidate it. The seam re-derives clusters itself (tadori = system-of-record),
+;; so :clusters from malak are advisory only and are intentionally omitted here.
+;;
+;; Boundary (enforced by the seam, not by trust):
+;;   - :external-sources  every :role MUST be :feature-flagged-input  (G4 — never :system-of-record)
+;;   - :findings          a person/ip/device/onion-host edge MUST carry an :evidence envelope CID;
+;;                        the seam encrypts it (G6). No identity/real-IP field is ever inline.
+;;   - :onion             PUBLIC indicators only (.onion + class); no de-anon field exists.
+;;   - live consolidation requires an ACTIVE caseMandate (G3); non-adjudicating, evidence-only (G7).
+;;
+;; malak本体 (out of this repo) does the ACTIVE pursuit (wallet_deep_inspect / address_label /
+;; onion-ransomware tracking, ADR-2605152000/2605172000). Active Tor de-anonymization is OUT OF
+;; SCOPE everywhere — onion stays a public passive indicator.
+{:report-id "malak-rpt-REF-0001"
+ :case-id "case:reference"
+ :chain :eth
+ :seeds ["0xthief-a"]
+ :txs [{:tx-hash "r1" :from "0xthief-a" :to "0xfeedface00000000000000000000000000000000"
+        :value 1 :inputs ["0xthief-a" "0xthief-b"] :ts 1}
+       {:tx-hash "r2" :from "0xsrc2" :to "0xfeedface00000000000000000000000000000000" :value 1 :ts 2}
+       {:tx-hash "r3" :from "0xsrc3" :to "0xfeedface00000000000000000000000000000000" :value 1 :ts 3}
+       {:tx-hash "r4" :from "0xfeedface00000000000000000000000000000000"
+        :to "0x1234567890abcdef1234567890abcdef12345678" :value 1 :ts 4}
+       {:tx-hash "r5" :from "0xfeedface00000000000000000000000000000000" :to "0xout1" :value 1 :ts 5}
+       {:tx-hash "r6" :from "0xfeedface00000000000000000000000000000000" :to "0xout2" :value 1 :ts 6}]
+ :labels {"0x1234567890abcdef1234567890abcdef12345678" :cex-hot}
+ :onion [{:onion-id "ref-onion-1" :address "abcdefghijklmnop234567.onion"
+          :class :ransomware-c2 :source "malak:onion-pursuit" :case-id "case:reference"}]
+ :findings [{:subject "cluster:0xthief-a" :object "person:suspect" :kind :person
+             :evidence ["bafkrei-encrypted-envelope-ref"] :confidence 700}]
+ :external-sources [{:id "chainalysis-compatible" :role :feature-flagged-input}]
+ :as-of 20260617}
