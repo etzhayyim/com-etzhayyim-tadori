@@ -178,7 +178,7 @@
     {
       "phase": "R0 / T0",
       "date": "2026-05-30 / 2026-06-02",
-      "scope": "Scaffold plus Datomic API bridge. 6 cells path-reserved under 40-engine/kotoba/crates/kotoba-kotodama/cells/tadori_*/ (import-time RuntimeError). 4 Lexicon schema skeletons under 00-contracts/lexicons/com/etzhayyim/tadori/. Datomic threat-intel bridge: schema.edn + JSONL seed under 20-actors/tadori/kotoba/; validator + tx_edn generator + live transact ported to cljc under 20-actors/tadori/methods/ (ingest.cljc + transact.cljc, ADR-2606160842); deploy.sh wraps com.etzhayyim.apps.kotoba.datomic.transact. No legacy data moved.",
+      "scope": "Scaffold plus Datomic API bridge. 6 cells path-reserved under kotoba-lang/kotodama-cells/tadori_*/ (import-time RuntimeError). 4 Lexicon schema skeletons under 00-contracts/lexicons/com/etzhayyim/tadori/. Datomic threat-intel bridge: schema.edn + JSONL seed under 20-actors/tadori/kotoba/; validator + tx_edn generator + live transact ported to cljc under 20-actors/tadori/methods/ (ingest.cljc + transact.cljc, ADR-2606160842); deploy.sh wraps com.etzhayyim.apps.kotoba.datomic.transact. No legacy data moved.",
       "murakumoFleet": "No deployment",
       "gate": "ADR-2605301400 (PROPOSED)"
     },
