@@ -119,7 +119,7 @@ Each cutover is dual-write/dual-read → verify set-equality → drop legacy (on
 
 The cell **logic** is now implemented + tested in `methods/*.cljc` and runs in **Phase-0
 (dry-run) over a synthetic authorized case** (`bb tadori:trace`). The **live Pregel deploy
-wrapper** under `40-engine/kotoba/crates/kotoba-kotodama/cells/tadori_*/` stays import-time
+wrapper** under `kotoba-lang/kotodama-cells/tadori_*/` stays import-time
 `RuntimeError` until Council Lv6+ ≥3 ratify (G3 authorization-DID), and live data acquisition
 stays operator+case-gated (`methods/transact.cljc`) — activation = real logic behind the gate,
 not a bypass of it (the ibuki R2 pattern).
