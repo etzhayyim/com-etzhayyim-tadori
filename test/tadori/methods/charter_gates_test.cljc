@@ -1,4 +1,4 @@
-(ns tadori.methods.test-charter-gates
+(ns tadori.methods.charter-gates-test
   "tadori 辿 — constitutional-gate conformance tests (manifest + central lexicons).
 
   Substrate-native Clojure (clj + datomic first tier). tadori is authorized on-chain tx tracing +
@@ -25,15 +25,13 @@
 
 #?(:clj
    (do
-     (def ^:private here (.getParentFile (java.io.File. ^String *file*)))      ;; methods/
-     (def ^:private actor-dir (.getParentFile here))                          ;; tadori/
-     (def ^:private root (.getParentFile (.getParentFile actor-dir)))          ;; repo root
+     (def ^:private actor-dir (java.io.File. "."))
      (def ^:private lexdir
-       (java.io.File. root "00-contracts/lexicons/com/etzhayyim/tadori"))
+       (java.io.File. actor-dir "wire/lex"))
      (defn- lex [name]
        (json/parse-string (slurp (java.io.File. lexdir (str name ".json")))))
      (defn- manifest []
-       (json/parse-string (slurp (java.io.File. actor-dir "manifest.jsonld"))))))
+       (:actor/manifest (clojure.edn/read-string (slurp (java.io.File. actor-dir "manifest.edn")))))))
 
 (defn- record-node [doc]
   (let [main (get-in doc ["defs" "main"])] (or (get main "record") main)))
@@ -84,5 +82,5 @@
 
 #?(:clj
    (defn -main [& _]
-     (let [r (run-tests 'tadori.methods.test-charter-gates)]
+     (let [r (run-tests 'tadori.methods.charter-gates-test)]
        (System/exit (if (zero? (+ (:fail r) (:error r))) 0 1)))))

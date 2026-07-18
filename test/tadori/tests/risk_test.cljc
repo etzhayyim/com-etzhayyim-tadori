@@ -1,4 +1,4 @@
-(ns tadori.tests.test-risk
+(ns tadori.tests.risk-test
   "tadori 辿 — high-risk/scam ingest + risk propagation + hidden-influence + watch-the-watchers.
   ADR-2605301400. Doctrine test-bound: non-adjudicating (attributed), G4 SoR, G6/G10 no-deanon,
   reciprocal/transparent, append-only 永久記憶."

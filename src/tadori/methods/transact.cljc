@@ -49,8 +49,7 @@
               :components_edn [(ingest/edn-string entity) (str ":" attr)] :limit 1}
              token))
 
-(def ^:private default-seed   ;; resolved at LOAD time (*file* is nil inside a fn body)
-  (io/file (-> *file* io/file .getParentFile .getParentFile) "kotoba" "seed.threat-intel.jsonl"))
+(def ^:private default-seed (io/file "wire" "seed.threat-intel.jsonl"))
 
 (defn -main
   "Operator CLI. Args: [seed-path] [graph] [url]. Reads KOTOBA_SESSION_POP / KOTOBA_TOKEN +

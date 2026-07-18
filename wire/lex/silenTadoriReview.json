@@ -1,0 +1,44 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.tadori.silenTadoriReview",
+  "description": "Periodic (quarterly) Council audit of tadori's constitutional invariants, expressed as structural zero-counters (same pattern as silenTsukuroiReview, ADR-2605291500, and silenKawaseReview). ANY nonzero counter ⇒ tadori halt + chigiri.disputeMediation + Bonsai seed-tier prune (G12). These counters encode the ADR-2605301400 §D1 gates: authorized-investigation-only, open-source, on-chain-monitorable, PII-encrypted, evidence-only (not enforcement), no platform key, Murakumo-only, no mass surveillance, kotoba-only, no adherent de-anon. R0 = schema skeleton; R1 = additionalProperties=false + on-chain attestation binding.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "createdAt",
+          "periodStart",
+          "periodEnd",
+          "noncaseWriteCount",
+          "plaintextPiiCount",
+          "proprietarySorCount",
+          "enforcementActionCount",
+          "platformHeldKeyCount",
+          "murakumoBypassCount",
+          "massSurveillanceCount",
+          "adherentDeanonCount",
+          "nonKotobaStoreCount"
+        ],
+        "properties": {
+          "createdAt": {"type": "string", "format": "datetime", "description": "ISO 8601 UTC timestamp of review emit."},
+          "periodStart": {"type": "string", "format": "datetime", "description": "Review period start."},
+          "periodEnd": {"type": "string", "format": "datetime", "description": "Review period end."},
+          "noncaseWriteCount": {"type": "integer", "const": 0, "description": "G3: live writes lacking an active caseMandate. MUST be 0."},
+          "plaintextPiiCount": {"type": "integer", "const": 0, "description": "G6: person/IP/device attribution datoms written plaintext (not under com.etzhayyim.encrypted.*). MUST be 0."},
+          "proprietarySorCount": {"type": "integer", "const": 0, "description": "G4: cases where a proprietary chain-analysis source was used as the system of record (rather than a feature-flagged input). MUST be 0."},
+          "enforcementActionCount": {"type": "integer", "const": 0, "description": "G7: tadori-initiated enforcement actions (tadori is evidence-only; enforcement routes via yabai + Council). MUST be 0."},
+          "platformHeldKeyCount": {"type": "integer", "const": 0, "description": "G8 (ADR-2605231525): platform-held private keys/master credentials. MUST be 0."},
+          "murakumoBypassCount": {"type": "integer", "const": 0, "description": "G9 (ADR-2605215000): inference calls bypassing the Murakumo gateway. MUST be 0."},
+          "massSurveillanceCount": {"type": "integer", "const": 0, "description": "G10: untargeted / non-case-scoped bulk collection events. MUST be 0."},
+          "adherentDeanonCount": {"type": "integer", "const": 0, "description": "G10: attributions that de-anonymize an etzhayyim adherent. MUST be 0."},
+          "nonKotobaStoreCount": {"type": "integer", "const": 0, "description": "G11 (ADR-2605262130): writes to yata SQL / RisingWave / Postgres / SQLite. MUST be 0."},
+          "casesReviewed": {"type": "integer", "minimum": 0, "description": "Number of active/closed cases audited this period."},
+          "councilAttestationRef": {"type": "string", "description": "On-chain Council attestation CID for this review (Transparent Force discipline)."}
+        }
+      }
+    }
+  }
+}

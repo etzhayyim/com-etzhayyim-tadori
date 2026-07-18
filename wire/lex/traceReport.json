@@ -1,0 +1,36 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.tadori.traceReport",
+  "description": "Result of a wallet/address trace for a case — the durable, kotoba-persisted output of a malak wallet_deep_inspect_pursuit / address_label_pursuit run (ADR-2605152000), recording the target classification, top counterparties, and aggregated labels as references to tx/addr/cluster/label datoms (ADR-2605301400 §D2). tadori OWNS this durable report; malak owns the ephemeral Pregel super-steps that compute it. G9 Murakumo-only: any LLM verdict in the underlying run routed through the Murakumo gateway (ADR-2605215000). R0 = schema skeleton; R1 = additionalProperties=false.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "createdAt",
+          "caseId",
+          "chain",
+          "targetAddress",
+          "classification",
+          "confidence"
+        ],
+        "properties": {
+          "createdAt": {"type": "string", "format": "datetime", "description": "ISO 8601 UTC timestamp."},
+          "caseId": {"type": "string", "description": "Owning caseMandate.caseId. G3."},
+          "chain": {"type": "string", "description": "Chain id (bsc / eth / btc) — must be in caseMandate.scopeChains."},
+          "targetAddress": {"type": "string", "description": "The traced address (checksum-valid; ≠ operator self-loop per ADR-2605152000 gate_input)."},
+          "classification": {"type": "string", "knownValues": ["cex_cold", "cex_hot", "dex_router", "bridge_pool", "protocol_pool", "whale_eoa", "mixer", "unknown_eoa", "unverified_contract", "unlabeled_eoa", "sanctioned"], "description": "Wallet classification (ADR-2605152000 output classes). 'bridge_pool' requires explicit bridge-DB or ABI match (v1 false-positive fix)."},
+          "confidence": {"type": "integer", "minimum": 0, "maximum": 1000, "description": "Classification confidence, implied unit per-mille (0..1000 = 0.000..1.000). Integer per Lexicon v1 (no float)."},
+          "balanceUsd": {"type": "string", "description": "Reported balance (string to avoid float precision loss)."},
+          "txCount": {"type": "integer", "description": "Total transaction count observed."},
+          "topCounterparties": {"type": "array", "items": {"type": "string"}, "description": "CIDs/IRIs of the top-K counterparty addr datoms (default K=20)."},
+          "labelCids": {"type": "array", "items": {"type": "string"}, "description": "CIDs of the label datoms aggregated for this target."},
+          "runEngine": {"type": "string", "knownValues": ["malak.wallet_deep_inspect_pursuit", "malak.address_label_pursuit"], "description": "The malak Pregel that produced this report."},
+          "externalSourcesUsed": {"type": "array", "items": {"type": "string"}, "description": "G4 OPEN-SOURCE transparency: feature-flagged external data sources consulted (e.g. ofac-sdn / tornado-list / chainalysis-osi). Recorded as INPUTS only; never the system of record."}
+        }
+      }
+    }
+  }
+}

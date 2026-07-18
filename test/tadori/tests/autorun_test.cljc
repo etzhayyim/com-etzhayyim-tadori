@@ -1,4 +1,4 @@
-(ns tadori.tests.test-autorun
+(ns tadori.tests.autorun-test
   "tadori 辿 autonomous self-audit heartbeat + audit-log invariants. ADR-2605301400.
   Clojure port of `kotoba/test_autorun.py`, plus a Python↔Clojure CID-parity helper.
 

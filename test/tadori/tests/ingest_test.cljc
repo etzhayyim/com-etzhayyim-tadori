@@ -1,4 +1,4 @@
-(ns tadori.tests.test-ingest
+(ns tadori.tests.ingest-test
   "tadori 辿 threat-intel ingest gates + EAVT rendering. ADR-2605301400 / 2606160842.
   Clojure port of kotoba/test_invariants.py + kotoba/test_ingest_threat_intel.py.
 
@@ -13,7 +13,7 @@
             [tadori.methods.ingest :as ingest]))
 
 (defn- seed-records []
-  (ingest/load-jsonl (slurp (io/resource "tadori/kotoba/seed.threat-intel.jsonl"))))
+  (ingest/load-jsonl (slurp (io/resource "wire/seed.threat-intel.jsonl"))))
 
 (defn- src
   ([] (src "A" "enrichment" "public-archive"))

@@ -1,4 +1,4 @@
-(ns tadori.tests.test-trace
+(ns tadori.tests.trace-test
   "tadori 辿 — case-anchored tracing + clustering + onion + attribution invariants.
   ADR-2605301400. Activates cells case_intake / tx_trace / address_label /
   attribution_join (Phase-0, synthetic). Constitutional gates are test-bound."

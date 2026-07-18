@@ -87,11 +87,10 @@
         :chain (al/verify-chain log-path)})))
 
 #?(:clj
-   (def ^:private actor-dir
-     (-> *file* io/file .getParentFile .getParentFile)))   ;; 20-actors/tadori
+   (def ^:private actor-dir (io/file ".")))
 
 #?(:clj
-   (def default-seed (io/file actor-dir "kotoba" "seed.threat-intel.jsonl")))
+   (def default-seed (io/file actor-dir "wire" "seed.threat-intel.jsonl")))
 
 #?(:clj
    (defn -main

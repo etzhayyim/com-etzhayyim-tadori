@@ -1,4 +1,4 @@
-(ns tadori.tests.test-malak
+(ns tadori.tests.malak-test
   "tadori 辿 — malak → tadori traceReport seam invariants. ADR-2605301400 §D3 (T1).
   tadori re-derives (SoR), G3 active-case, G4 external-not-SoR, G6 PII-encrypted, provenance."
   (:require [clojure.string :as str]

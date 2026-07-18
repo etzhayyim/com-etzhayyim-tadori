@@ -1,0 +1,36 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.tadori.attributionFinding",
+  "description": "The cross-store attribution edge that no single store produces today (ADR-2605301400 §D2 `attribution` entity class): links an on-chain subject (addr / cluster) to an off-chain object (ip-obs / dns-obs / person / org) with evidence CIDs and a confidence score, expressed as a kotoba-kqe datom and traversable via the VAET arrangement (= yabai correlate-ip-activity, 2-hop). G6 PII-ENCRYPTED: any finding whose object is a natural person, an IP, or a device fingerprint MUST set encrypted=true and carry the attribution payload under the com.etzhayyim.encrypted.* envelope (ADR-2605181100), Signal-wrapped to the authorized case-member DIDs only. R0 = schema skeleton; R1 = additionalProperties=false + encrypted-when-PII enforcement.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "createdAt",
+          "caseId",
+          "subject",
+          "object",
+          "objectKind",
+          "evidence",
+          "confidence",
+          "encrypted"
+        ],
+        "properties": {
+          "createdAt": {"type": "string", "format": "datetime", "description": "ISO 8601 UTC timestamp."},
+          "caseId": {"type": "string", "description": "Owning caseMandate.caseId. G3: no caseless attribution."},
+          "subject": {"type": "string", "description": "On-chain subject — addr or cluster datom CID / IRI (tadori:addr:* / tadori:cluster:*)."},
+          "object": {"type": "string", "description": "Off-chain / cross-store object — ip-obs / dns-obs / person / org datom CID / IRI. PII objects are referenced by CID of the encrypted record (G6)."},
+          "objectKind": {"type": "string", "knownValues": ["ip-obs", "dns-obs", "person", "org", "email", "device"], "description": "Object class. person / ip-obs / device REQUIRE encrypted=true."},
+          "evidence": {"type": "array", "items": {"type": "string"}, "minLength": 1, "description": "Evidence datom CIDs (tx / label / ip-obs) supporting the edge. Append-only (G2)."},
+          "confidence": {"type": "integer", "minimum": 0, "maximum": 1000, "description": "Aggregated confidence, implied unit per-mille (0..1000 = 0.000..1.000). Multi-source priority per ADR-2605152000 classify_strict. Integer per Lexicon v1 (no float)."},
+          "encrypted": {"type": "boolean", "description": "G6: true when objectKind ∈ {person, ip-obs, device, email} — payload under com.etzhayyim.encrypted.* Signal-wrapped to case-members (ADR-2605181100). False permitted only for public on-chain↔public-label edges."},
+          "heuristic": {"type": "string", "description": "Attribution heuristic (e.g. common-input-ownership / passive-dns-pivot / reuse-of-deposit-address / temporal-correlation)."},
+          "supersededBy": {"type": "string", "description": "CID of a later finding that revises this one (append-only correction; no soft delete, G2)."}
+        }
+      }
+    }
+  }
+}

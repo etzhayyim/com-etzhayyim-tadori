@@ -1,7 +1,7 @@
 #!/usr/bin/env bb
 ;; tadori 辿 — validation of eth-checksummed? (EIP-55 checksum-PRESENCE detection).
 ;; Run:  bb --classpath 20-actors 20-actors/tadori/methods/test_address_checksum.cljc
-(ns tadori.methods.test-address-checksum
+(ns tadori.methods.address-checksum-test
   "Validation of eth-checksummed? — the EIP-55 checksum-PRESENCE detector in tadori's address
   parser, which had no test. It is honestly a presence check, NOT full verification: keccak-256
   (the EIP-55 hash) is not in babashka's stdlib, so the function returns truthy iff a structurally
@@ -52,5 +52,5 @@
 
 #?(:clj
    (when (= *file* (System/getProperty "babashka.file"))
-     (let [{:keys [fail error]} (run-tests 'tadori.methods.test-address-checksum)]
+     (let [{:keys [fail error]} (run-tests 'tadori.methods.address-checksum-test)]
        (System/exit (if (zero? (+ fail error)) 0 1)))))

@@ -1,4 +1,4 @@
-(ns tadori.kotoba.test-audit-log
+(ns tadori.kotoba.audit-log-test
   "Tests for tadori.audit-log (ADR-2605301400 §D1 port). Verifies the silenTadoriReview datom
   flattening, the G12 assert-all-clear halt, the content-address (golden CID pinned to the Python
   output, byte-for-byte verified), make-tx, and the EDN render → read-back → verify-chain round-trip
