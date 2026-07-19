@@ -22,7 +22,8 @@
   ValidationError is an ex-info carrying {:tadori/error :validation}. Stdlib +
   cheshire (babashka built-in) only; deterministic; NO external I/O."
   (:require [clojure.string :as str]
-            [kotoba.datom :as kd]))
+            [kotoba.datom :as kd]
+            #?(:clj [cheshire.core :as json])))
 
 (def vendor-compat
   "Vendor-shaped feeds accepted ONLY as feature-flagged input, never system-of-record (G4)."
@@ -49,7 +50,7 @@
   and `#` comments are skipped, exactly like the Python loader. No fetch — the corpus
   is staged on disk by an operator (G3 offline posture)."
   [^String text]
-  (let [parse #?(:clj (requiring-resolve 'cheshire.core/parse-string)
+  (let [parse #?(:clj json/parse-string
                  :cljs (fn [s _] (js->clj (js/JSON.parse s))))]
     (loop [lines (map-indexed vector (str/split-lines text))
            out []]

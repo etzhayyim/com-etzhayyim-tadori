@@ -10,7 +10,8 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.test :refer [deftest is]]
-            [tadori.methods.ingest :as ingest]))
+            [tadori.methods.ingest :as ingest]
+            [tadori.methods.transact :as transact]))
 
 (defn- seed-records []
   (ingest/load-jsonl (slurp (io/resource "wire/seed.threat-intel.jsonl"))))
@@ -106,3 +107,7 @@
           ["ip:192.0.2.10:2026-06-02" "tadori.ip/address"]
           ["indicator:domain:sample.invalid" "tadori.indicator/value"]]
          (ingest/readback-checks (seed-records)))))
+
+(deftest live-http-requires-explicit-request-capability
+  (is (thrown-with-msg? clojure.lang.ExceptionInfo #"explicit HTTP request capability"
+                        (transact/http-post nil "http://localhost" {} nil))))

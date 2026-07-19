@@ -15,6 +15,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.test :refer [deftest is]]
+            [cheshire.core :as json]
             [kotoba.datom :as kd]
             [tadori.methods.audit-log :as al]
             [tadori.methods.autorun :as autorun]
@@ -29,7 +30,7 @@
   "Build a staged corpus the way load-jsonl would (string keys + :_lineno)."
   [records]
   (ingest/load-jsonl
-   (str/join "\n" (map (requiring-resolve 'cheshire.core/generate-string) records))))
+   (str/join "\n" (map json/generate-string records))))
 
 ;; a minimal gate-clean corpus: one public source + one encrypted ip-obs
 (def ^:private clean
