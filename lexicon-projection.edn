@@ -1,0 +1,9 @@
+{:projection/canonical-root "lex"
+ :projection/wire-root "wire/lex"
+ :projection/source-format :edn
+ :projection/output-format :json
+ :projection/import {:source "wire/lex" :semantics :preserved}
+ :projection/generator
+ {:repository "https://github.com/etzhayyim/com-etzhayyim-lexicons-bundle"
+  :revision "c78dfb9764c952b770d47553cd110768d6f7c336"
+  :path "scripts/project-edn-lexicons.clj"}}
