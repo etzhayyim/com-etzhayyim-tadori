@@ -14,47 +14,47 @@
   collection_mode other than operator-staged-passive-archive (G3); vendor-compatible feeds may
   not be system-of-record (G4) — both enforced by tadori.methods.ingest/validate-records.
 
-  Stdlib + babashka.http-client (resolved at call time) only."
+  Network and codec authority are explicit host dependencies."
   (:require [clojure.java.io :as io]
+            [cheshire.core :as json]
             [tadori.methods.ingest :as ingest]))
 
 (def nsid-session-verify "com.etzhayyim.pds.session.verify")
 (def nsid-datomic-transact "com.etzhayyim.apps.kotoba.datomic.transact")
 (def nsid-datomic-datoms "com.etzhayyim.apps.kotoba.datomic.datoms")
 
-(defn- http-post
-  "POST json body → [status parsed-body]. Resolves babashka.http-client at call time so the
-  pure namespaces never pull a network dependency at load."
-  [url body token]
-  (let [request (requiring-resolve 'babashka.http-client/request)
-        json-str (requiring-resolve 'cheshire.core/generate-string)
-        json-parse (requiring-resolve 'cheshire.core/parse-string)
-        headers (cond-> {"Content-Type" "application/json"}
+(defn http-post
+  "POST JSON through an explicitly granted request capability."
+  [request-fn url body token]
+  (when-not (fn? request-fn)
+    (throw (ex-info "tadori live transact requires an explicit HTTP request capability"
+                    {:capability :http-request})))
+  (let [headers (cond-> {"Content-Type" "application/json"}
                   token (assoc "Authorization" (str "Bearer " token)))
-        resp (request {:method :post :uri url :headers headers
-                       :body (json-str body) :throw false :timeout 30000})
+        resp (request-fn {:method :post :uri url :headers headers
+                          :body (json/generate-string body) :throw false :timeout 30000})
         raw (or (not-empty (:body resp)) "{}")]
-    [(:status resp) (try (json-parse raw true) (catch Exception _ {:error raw}))]))
+    [(:status resp) (try (json/parse-string raw true) (catch Exception _ {:error raw}))]))
 
-(defn verify-session [base-url pop-token]
-  (let [[status body] (http-post (str base-url "/xrpc/" nsid-session-verify) {:token pop-token} nil)]
+(defn verify-session [request-fn base-url pop-token]
+  (let [[status body] (http-post request-fn (str base-url "/xrpc/" nsid-session-verify) {:token pop-token} nil)]
     [(and (= status 200) (boolean (:valid body))) body]))
 
-(defn transact [base-url graph tx-edn token]
-  (http-post (str base-url "/xrpc/" nsid-datomic-transact) {:graph graph :tx_edn tx-edn} token))
+(defn transact [request-fn base-url graph tx-edn token]
+  (http-post request-fn (str base-url "/xrpc/" nsid-datomic-transact) {:graph graph :tx_edn tx-edn} token))
 
-(defn read-datoms [base-url graph entity attr token]
-  (http-post (str base-url "/xrpc/" nsid-datomic-datoms)
+(defn read-datoms [request-fn base-url graph entity attr token]
+  (http-post request-fn (str base-url "/xrpc/" nsid-datomic-datoms)
              {:graph graph :index ":eavt"
               :components_edn [(ingest/edn-string entity) (str ":" attr)] :limit 1}
              token))
 
 (def ^:private default-seed (io/file "wire" "seed.threat-intel.jsonl"))
 
-(defn -main
+(defn run-cli
   "Operator CLI. Args: [seed-path] [graph] [url]. Reads KOTOBA_SESSION_POP / KOTOBA_TOKEN +
   TADORI_CASE_ID from the env. No credential ⇒ DRY RUN (validate + print tx_edn summary)."
-  [& args]
+  [request-fn args]
   (let [env (System/getenv)
         seed (if (first args) (io/file (first args)) default-seed)
         graph (or (second args) (.get env "TADORI_GRAPH") "etzhayyim/tadori/threat-intel")
@@ -72,20 +72,23 @@
             (println (format "   tx[data] count~%d bytes=%d" (count datoms) (count (.getBytes ^String tx-edn "UTF-8")))))
         (do
           (when (.get env "KOTOBA_SESSION_POP")
-            (let [[ok info] (verify-session url (.get env "KOTOBA_SESSION_POP"))]
+            (let [[ok info] (verify-session request-fn url (.get env "KOTOBA_SESSION_POP"))]
               (when-not ok
                 (binding [*out* *err*] (println (str "!! session PoP rejected: " info)))
                 (System/exit 1))
               (println (str "   session valid for " (get info :did "?")))))
           (println (format "--> datomic.transact data count~%d graph=%s" (count datoms) graph))
-          (let [[status body] (transact url graph tx-edn token)]
+          (let [[status body] (transact request-fn url graph tx-edn token)]
             (when (not= status 200)
               (binding [*out* *err*] (println (str "!! transact failed: " status " " body)))
               (System/exit 1))
             (println (str "    ok tx_cid=" (get body :tx_cid "?") " datom_count=" (get body :datom_count "?"))))
           (doseq [[entity attr] (ingest/readback-checks records)]
-            (let [[status body] (read-datoms url graph entity attr token)]
+            (let [[status body] (read-datoms request-fn url graph entity attr token)]
               (when (or (not= status 200) (< (long (get body :datom_count 0)) 1))
                 (binding [*out* *err*] (println (str "!! readback failed for " entity " " attr ": " status " " body)))
                 (System/exit 1))))
           (println (format "    readback ok checks=%d graph=%s" (count (ingest/readback-checks records)) graph)))))))
+
+(defn -main [& args]
+  (run-cli nil args))
