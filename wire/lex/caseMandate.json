@@ -1,39 +1,76 @@
 {
-  "lexicon": 1,
-  "id": "com.etzhayyim.tadori.caseMandate",
-  "description": "Authorization anchor for a tadori tracing case. EVERY live write to the tadori case graph MUST reference an active caseMandate (G3 authorized-investigation-only); absent a mandate tadori runs Phase 0 dry-run only. Parallels tsukuroi's remediationMandate (ADR-2605291500) and the malak case-anchor model (ADR-2605152000). Carries the authorization basis (fraud-victim recovery / AML-CTI duty / sanctioned-entity tracing / Council-authorized Transparent Force action per Charter §1.12). R0 = schema skeleton; R1 = additionalProperties=false + required-field enforcement + authority-signature verification.",
-  "defs": {
-    "main": {
-      "type": "record",
-      "key": "tid",
-      "record": {
-        "type": "object",
-        "required": [
-          "createdAt",
-          "caseId",
-          "narrative",
-          "authorizationRef",
-          "authorizationBasis",
-          "authorityDid",
-          "authoritySignature",
-          "phase",
-          "validFrom",
-          "validUntil"
-        ],
-        "properties": {
-          "createdAt": {"type": "string", "format": "datetime", "description": "ISO 8601 UTC timestamp of mandate emit."},
-          "caseId": {"type": "string", "description": "Stable case anchor id (e.g. case:<slug>-<yyyymmdd>). Every tx/addr/cluster/label/attribution datom links back to this. G3."},
-          "narrative": {"type": "string", "description": "Human-readable investigation narrative / scope statement."},
-          "authorizationRef": {"type": "string", "description": "CID / URL / document id of the written authorization (victim engagement, AML mandate, sanctions order, Council resolution). G3: no live write without this."},
-          "authorizationBasis": {"type": "string", "knownValues": ["fraud-victim-recovery", "aml-cti-duty", "sanctioned-entity-tracing", "council-transparent-force"], "description": "Constitutional basis for the trace (Charter §1.12 Transparent Force discipline applies to council-transparent-force)."},
-          "authorityDid": {"type": "string", "description": "etzhayyim approver DID ∈ authority chain (Council Lv6+ for council-transparent-force basis)."},
-          "authoritySignature": {"type": "string", "description": "Detached signature over the mandate payload, verifies against authorityDid. G7-equivalent."},
-          "phase": {"type": "integer", "knownValues": [0, 1], "description": "0 = dry-run (no live write); 1 = live write to kotoba case graph. Default 0 (malak contract)."},
-          "validFrom": {"type": "string", "format": "datetime", "description": "Mandate window start."},
-          "validUntil": {"type": "string", "format": "datetime", "description": "Mandate window end."},
-          "scopeChains": {"type": "array", "items": {"type": "string"}, "description": "Chains in scope for this case (e.g. bsc, eth, btc). Out-of-scope chains are not traced under this mandate."},
-          "transparentForceLogged": {"type": "boolean", "const": true, "description": "G5 ON-CHAIN-MONITORABLE: every case action emits an on-chain-anchored audit datom; structurally true (Charter §1.12)."},
-          "revoked": {"type": "boolean", "description": "One-way, immediate revocation by the authorizing party."}
+  "lexicon" : 1,
+  "id" : "com.etzhayyim.tadori.caseMandate",
+  "description" : "Authorization anchor for a tadori tracing case. EVERY live write to the tadori case graph MUST reference an active caseMandate (G3 authorized-investigation-only); absent a mandate tadori runs Phase 0 dry-run only. Parallels tsukuroi's remediationMandate (ADR-2605291500) and the malak case-anchor model (ADR-2605152000). Carries the authorization basis (fraud-victim recovery / AML-CTI duty / sanctioned-entity tracing / Council-authorized Transparent Force action per Charter §1.12). R0 = schema skeleton; R1 = additionalProperties=false + required-field enforcement + authority-signature verification.",
+  "defs" : {
+    "main" : {
+      "type" : "record",
+      "key" : "tid",
+      "record" : {
+        "type" : "object",
+        "required" : [ "createdAt", "caseId", "narrative", "authorizationRef", "authorizationBasis", "authorityDid", "authoritySignature", "phase", "validFrom", "validUntil" ],
+        "properties" : {
+          "validFrom" : {
+            "type" : "string",
+            "format" : "datetime",
+            "description" : "Mandate window start."
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "datetime",
+            "description" : "ISO 8601 UTC timestamp of mandate emit."
+          },
+          "caseId" : {
+            "type" : "string",
+            "description" : "Stable case anchor id (e.g. case:<slug>-<yyyymmdd>). Every tx/addr/cluster/label/attribution datom links back to this. G3."
+          },
+          "narrative" : {
+            "type" : "string",
+            "description" : "Human-readable investigation narrative / scope statement."
+          },
+          "transparentForceLogged" : {
+            "type" : "boolean",
+            "const" : true,
+            "description" : "G5 ON-CHAIN-MONITORABLE: every case action emits an on-chain-anchored audit datom; structurally true (Charter §1.12)."
+          },
+          "authoritySignature" : {
+            "type" : "string",
+            "description" : "Detached signature over the mandate payload, verifies against authorityDid. G7-equivalent."
+          },
+          "authorizationRef" : {
+            "type" : "string",
+            "description" : "CID / URL / document id of the written authorization (victim engagement, AML mandate, sanctions order, Council resolution). G3: no live write without this."
+          },
+          "revoked" : {
+            "type" : "boolean",
+            "description" : "One-way, immediate revocation by the authorizing party."
+          },
+          "authorizationBasis" : {
+            "type" : "string",
+            "knownValues" : [ "fraud-victim-recovery", "aml-cti-duty", "sanctioned-entity-tracing", "council-transparent-force" ],
+            "description" : "Constitutional basis for the trace (Charter §1.12 Transparent Force discipline applies to council-transparent-force)."
+          },
+          "validUntil" : {
+            "type" : "string",
+            "format" : "datetime",
+            "description" : "Mandate window end."
+          },
+          "phase" : {
+            "type" : "integer",
+            "knownValues" : [ 0, 1 ],
+            "description" : "0 = dry-run (no live write); 1 = live write to kotoba case graph. Default 0 (malak contract)."
+          },
+          "authorityDid" : {
+            "type" : "string",
+            "description" : "etzhayyim approver DID ∈ authority chain (Council Lv6+ for council-transparent-force basis)."
+          },
+          "scopeChains" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            },
+            "description" : "Chains in scope for this case (e.g. bsc, eth, btc). Out-of-scope chains are not traced under this mandate."
+          }
         }
       }
     }
